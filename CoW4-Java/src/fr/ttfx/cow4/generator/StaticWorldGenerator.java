@@ -19,6 +19,7 @@ public class StaticWorldGenerator {
         @Override
         public void parseCell(JsonObject cellData, int line, int column) {
             Cell cell = new Cell();
+            cell.setId(cellData.get("id").getAsLong());
             cell.setLeft(cellData.has("left"));
             cell.setRight(cellData.has("right"));
             cell.setTop(cellData.has("top"));
@@ -48,6 +49,7 @@ public class StaticWorldGenerator {
                 (world) -> {
                     printWorld(world);
                     System.exit(0);
+                    return null;
                 },
                 new StaticDataRecorder());
     }
@@ -56,9 +58,11 @@ public class StaticWorldGenerator {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
         for (int i = 0; i < world.getLabyrinth().length; i++) {
-            sb.append("{");
+            sb.append("{\n");
             for (int j = 0; j < world.getLabyrinth()[i].length; j++) {
                 sb.append("new Cell(");
+                sb.append(world.getLabyrinth()[i][j].getId());
+                sb.append("L,");
                 sb.append(world.getLabyrinth()[i][j].canLeft());
                 sb.append(",");
                 sb.append(world.getLabyrinth()[i][j].canRight());
@@ -83,6 +87,5 @@ public class StaticWorldGenerator {
             sb.append("\n");
         }
         sb.append("}");
-        System.out.println(sb.toString());
     }
 }

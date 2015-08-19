@@ -1,8 +1,10 @@
 package fr.ttfx.cow4.socket;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import fr.ttfx.cow4.actions.Order;
 import fr.ttfx.cow4.world.GameWorld;
 
 import java.io.BufferedReader;
@@ -10,7 +12,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Created by Naël MSKINE on 08/08/15.
@@ -20,12 +22,12 @@ import java.util.function.Consumer;
  */
 public class SocketManager {
     private GameWorld gameWorld;
-    private Consumer<GameWorld> handleFunc = null;
+    private Function<GameWorld, Order[]> handleFunc = null;
     private Socket socket = null;
     private PrintWriter output;
     private BufferedReader input;
 
-    public boolean connectToServer(String host, int port, String iaName, String iaImgUrl, Consumer<GameWorld> handleFunc, GameWorld gameWorld) {
+    public boolean connectToServer(String host, int port, String iaName, String iaImgUrl, Function<GameWorld, Order[]> handleFunc, GameWorld gameWorld) {
         this.handleFunc = handleFunc;
         this.gameWorld = gameWorld;
 
@@ -52,16 +54,28 @@ public class SocketManager {
                             int read = input.read(buffer);
                             sb.append(buffer);
                             int messageEnd = sb.indexOf("#end#");
-                            System.out.println("buffer : " + sb.toString());
-                            System.out.println("end : " + messageEnd);
                             if (messageEnd > 0) {
-                                System.out.println("found end");
                                 String message = sb.substring(0, messageEnd);
+                                /////////////////////////////////////////
+                                //          Parse Input Data           //
+                                /////////////////////////////////////////
                                 parseMessage(message);
-                                String otherPart = sb.substring(messageEnd + "#end#".length(), sb.length());
+
+                                /////////////////////////////////////////
+                                //              Call IA                //
+                                /////////////////////////////////////////
+                                Order[] orders = handleFunc.apply(gameWorld);
+
+                                /////////////////////////////////////////
+                                //      Send response to server        //
+                                /////////////////////////////////////////
+                                Response response = new Response();
+                                response.setActions(orders);
+                                response.setIa(gameWorld.getMyIA());
+                                String responseStr = gson.toJson(response);
+                                output.write(responseStr);
+                                output.flush();
                                 sb = new StringBuilder();
-                                // System.out.println("other" + );
-                                // sb.append(otherPart);
                             }
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -86,6 +100,7 @@ public class SocketManager {
      * fr: Le parser doit être instancié le moins de fois possible pour améliorer les performances
      */
     static JsonParser parser = new JsonParser();
+    static Gson gson = new Gson();
 
     /**
      * Parse and extracts informations available in the message
@@ -93,7 +108,6 @@ public class SocketManager {
      * @param message A message read from the socket
      */
     private void parseMessage(String message) {
-        System.out.println("message = " + message);
         JsonObject jsonMessage = parser.parse(message).getAsJsonObject();
 
         if (jsonMessage.get("type").getAsString().equals("id")) {
@@ -104,7 +118,6 @@ public class SocketManager {
             Long id = jsonMessage.get("id").getAsLong();
             gameWorld.getMyIA().setId(id);
         } else {
-            System.out.println("Turn");
             // Receiving a message. The turn starts.
             JsonObject dataPart = jsonMessage.get("data").getAsJsonObject();
 
@@ -114,6 +127,7 @@ public class SocketManager {
             /////////////////////////////////////////
             gameWorld.setGameTurn(dataPart.get("currentTurn").getAsInt());
 
+            System.out.println("Turn " + gameWorld.getGameTurn());
 
             /////////////////////////////////////////
             //              IAs Infos               //
@@ -135,7 +149,6 @@ public class SocketManager {
                     gameWorld.parseCell(cell, i, j);
                 }
             }
-            handleFunc.accept(gameWorld);
         }
     }
 

@@ -3,7 +3,12 @@ package fr.ttfx.cow4.world;
 /**
  * Created by TheArsenik on 16/08/15.
  */
+
+/**
+ * A Cell
+ */
 public class Cell {
+    private Long id;
     private int line;
     private int column;
     private boolean left;
@@ -15,7 +20,8 @@ public class Cell {
 
     }
 
-    public Cell(boolean left, boolean right, boolean top, boolean bottom, int line, int column) {
+    public Cell(Long id, boolean left, boolean right, boolean top, boolean bottom, int line, int column) {
+        this.id = id;
         this.left = left;
         this.right = right;
         this.top = top;
@@ -23,6 +29,10 @@ public class Cell {
         this.line = line;
         this.column = column;
     }
+
+    public Long getId() { return id; }
+
+    public void setId(Long id) { this.id = id; }
 
     public boolean canLeft() {
         return left;
@@ -64,11 +74,8 @@ public class Cell {
         this.line = line;
     }
 
-    public int getColumn() {
-        return column;
-    }
+    public int getColumn() { return column; }
 
-    public void setColumn(int column) {
-        this.column = column;
-    }
+    public void setColumn(int column) { this.column = column; }
+
 }

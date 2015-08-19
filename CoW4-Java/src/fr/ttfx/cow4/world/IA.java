@@ -1,5 +1,6 @@
 package fr.ttfx.cow4.world;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -8,7 +9,7 @@ import java.util.List;
 public class IA {
     private Long id;
     private int invisibilityDuration;
-    private List<Item> ownedItems;
+    private List<Item> items = new ArrayList<>();
     private String name;
     private int mouvementPoints;
     private Cell cell;
@@ -33,12 +34,10 @@ public class IA {
         return invisibilityDuration > 0;
     }
 
-    public List<Item> getOwnedItems() {
-        return ownedItems;
-    }
+    public List<Item> getItems() { return items; }
 
-    public void setOwnedItems(List<Item> ownedItems) {
-        this.ownedItems = ownedItems;
+    public void setItems(List<Item> items) {
+        this.items = items;
     }
 
     public String getName() {
