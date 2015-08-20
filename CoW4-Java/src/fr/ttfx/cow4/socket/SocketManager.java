@@ -42,7 +42,7 @@ public class SocketManager {
                     "    \"name\":\"" + iaName + "\"," +
                     "    \"avatar\":\"" + iaImgUrl + "\"," +
                     "    \"token\":\"" + "tokendemo" + "\"," +
-                    "    \"profil\":\"" + 1 + "\"" +
+                    "    \"profil\":" + 1 + "" +
                     "}" +
                     "#end#");
             output.flush();
