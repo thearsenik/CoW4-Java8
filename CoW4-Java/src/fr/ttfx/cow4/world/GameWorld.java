@@ -68,11 +68,11 @@ public abstract class GameWorld {
      * @return returns an IA if matching with an id else null.
      */
     public IA getIaById(Long id) {
-        if (getMyIA().getId() == id) {
+        if (getMyIA().getId().equals(id)) {
             return getMyIA();
-        } else if (getEnnemyIA().getId() == id) {
+        } else if (getEnnemyIA().getId().equals(id)) {
             return getEnnemyIA();
-        } else if (getChicken().getId() == id) {
+        } else if (getChicken().getId().equals(id)) {
             return getChicken();
         }
         return null;
@@ -112,5 +112,6 @@ public abstract class GameWorld {
                 System.out.println("WARNING: Unrecognized item: " + itemStr);
             }
         }
+        System.out.println("MyIA: " + getMyIA().getId() + ", EnnemyIA: " + getEnnemyIA().getId() + ", Chicken: " + getChicken().getId());
     }
 }

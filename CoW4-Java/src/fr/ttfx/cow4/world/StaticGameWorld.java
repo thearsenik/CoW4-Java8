@@ -1,5 +1,7 @@
 package fr.ttfx.cow4.world;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 
 /**
@@ -694,8 +696,11 @@ public class StaticGameWorld extends GameWorld {
     @Override
     public void parseCell(JsonObject cell, int line, int column) {
         if (cell.has("occupant")) {
-            Long occupantId = cell.get("occupant").getAsJsonObject().get("id").getAsLong();
-            getIaById(occupantId).setCell(labyrinth[line][column]);
+                JsonElement occupant = cell.get("occupant");
+                if (!(occupant instanceof JsonNull)) {
+                        Long occupantId = occupant.getAsJsonObject().get("id").getAsLong();
+                        getIaById(occupantId).setCell(labyrinth[line][column]);
+                }
         }
     }
 

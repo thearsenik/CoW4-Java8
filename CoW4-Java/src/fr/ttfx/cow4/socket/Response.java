@@ -3,31 +3,24 @@ package fr.ttfx.cow4.socket;
 import fr.ttfx.cow4.actions.Order;
 import fr.ttfx.cow4.world.IA;
 
+import java.util.List;
+
 /**
  * Created by Arsenik on 19/08/15.
  */
 public class Response {
     private String type = "turnResult";
-    private IA ia;
-    private Order[] actions;
+    private List<Order> actions;
 
     public String getType() {
         return type;
     }
 
-    public IA getIa() {
-        return ia;
-    }
-
-    public void setIa(IA ia) {
-        this.ia = ia;
-    }
-
-    public Order[] getActions() {
+    public List<Order> getActions() {
         return actions;
     }
 
-    public void setActions(Order[] actions) {
+    public void setActions(List<Order> actions) {
         this.actions = actions;
     }
 }
