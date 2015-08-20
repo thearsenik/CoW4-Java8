@@ -40,7 +40,9 @@ public class SocketManager {
             output.write("{" +
                     "    \"type\":\"authenticate\"," +
                     "    \"name\":\"" + iaName + "\"," +
-                    "    \"avatar\":\"" + iaImgUrl + "\"" +
+                    "    \"avatar\":\"" + iaImgUrl + "\"," +
+                    "    \"token\":\"" + "tokendemo" + "\"," +
+                    "    \"profil\":\"" + 1 + "\"" +
                     "}" +
                     "#end#");
             output.flush();
@@ -54,6 +56,7 @@ public class SocketManager {
                     int messageEnd = sb.indexOf("#end#");
                     if (messageEnd > 0) {
                         String message = sb.substring(0, messageEnd);
+                        System.out.println(message);
                         /////////////////////////////////////////
                         //          Parse Input Data           //
                         /////////////////////////////////////////
@@ -71,6 +74,7 @@ public class SocketManager {
                             Response response = new Response();
                             response.setActions(orders);
                             String responseStr = gson.toJson(response);
+                            System.out.println(responseStr);
                             output.write(responseStr);
                             output.write("#end#\n");
                             output.flush();
@@ -105,7 +109,6 @@ public class SocketManager {
      * @param message A message read from the socket
      */
     private boolean parseMessage(String message) {
-        System.out.println("Parsing message: " + message);
         JsonObject jsonMessage = parser.parse(message).getAsJsonObject();
 
         if (jsonMessage.get("type").getAsString().equals("id")) {
@@ -126,7 +129,6 @@ public class SocketManager {
             /////////////////////////////////////////
             gameWorld.setGameTurn(dataPart.get("currentTurn").getAsInt());
 
-            System.out.println("Turn " + gameWorld.getGameTurn());
 
             /////////////////////////////////////////
             //              IAs Infos               //

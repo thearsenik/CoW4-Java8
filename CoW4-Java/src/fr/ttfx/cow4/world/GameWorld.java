@@ -1,6 +1,8 @@
 package fr.ttfx.cow4.world;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 
 /**
@@ -78,7 +80,15 @@ public abstract class GameWorld {
         return null;
     }
 
-    public abstract void parseCell(JsonObject cell, int line, int column);
+    public void parseCell(JsonObject cell, int line, int column) {
+        if (cell.has("occupant")) {
+            JsonElement occupant = cell.get("occupant");
+            if (!(occupant instanceof JsonNull)) {
+                Long occupantId = occupant.getAsJsonObject().get("id").getAsLong();
+                getIaById(occupantId).setCell(labyrinth[line][column]);
+            }
+        }
+    }
 
     public abstract void initNbLines(int nb);
 
@@ -112,6 +122,5 @@ public abstract class GameWorld {
                 System.out.println("WARNING: Unrecognized item: " + itemStr);
             }
         }
-        System.out.println("MyIA: " + getMyIA().getId() + ", EnnemyIA: " + getEnnemyIA().getId() + ", Chicken: " + getChicken().getId());
     }
 }

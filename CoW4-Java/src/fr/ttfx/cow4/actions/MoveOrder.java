@@ -3,12 +3,12 @@ package fr.ttfx.cow4.actions;
 /**
  * Created by Arsenik on 19/08/15.
  */
-public class MoveOrder implements Order {
+public class MoveOrder extends Order {
     private Long target;
 
-    @Override
-    public OrderType getType() {
-        return OrderType.MOVE_ORDER;
+    public MoveOrder(Long targetCellId) {
+        this.target = targetCellId;
+        type = OrderType.MOVE_ORDER.getLabel();
     }
 
     public Long getTarget() {

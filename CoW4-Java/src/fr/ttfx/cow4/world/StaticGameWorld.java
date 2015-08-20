@@ -694,17 +694,6 @@ public class StaticGameWorld extends GameWorld {
     }
 
     @Override
-    public void parseCell(JsonObject cell, int line, int column) {
-        if (cell.has("occupant")) {
-                JsonElement occupant = cell.get("occupant");
-                if (!(occupant instanceof JsonNull)) {
-                        Long occupantId = occupant.getAsJsonObject().get("id").getAsLong();
-                        getIaById(occupantId).setCell(labyrinth[line][column]);
-                }
-        }
-    }
-
-    @Override
     public void initNbLines(int nb) {
         // Nothing ... labyrinth is statically allocated
     }

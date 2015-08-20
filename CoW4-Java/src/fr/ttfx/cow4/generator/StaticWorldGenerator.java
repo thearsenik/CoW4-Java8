@@ -7,6 +7,7 @@ package fr.ttfx.cow4.generator;
 import com.google.gson.JsonObject;
 import fr.ttfx.cow4.socket.SocketManager;
 import fr.ttfx.cow4.world.Cell;
+import fr.ttfx.cow4.world.DynamicGameWorld;
 import fr.ttfx.cow4.world.GameWorld;
 
 /**
@@ -14,31 +15,6 @@ import fr.ttfx.cow4.world.GameWorld;
  * fr: Cette classe génère la structure du labyrinthe pour la classe StaticGameWorld
  */
 public class StaticWorldGenerator {
-
-    public static class StaticDataRecorder extends GameWorld{
-        @Override
-        public void parseCell(JsonObject cellData, int line, int column) {
-            Cell cell = new Cell();
-            cell.setId(cellData.get("id").getAsLong());
-            cell.setLeft(cellData.has("left"));
-            cell.setRight(cellData.has("right"));
-            cell.setTop(cellData.has("top"));
-            cell.setBottom(cellData.has("bottom"));
-            cell.setLine(line);
-            cell.setColumn(column);
-            labyrinth[line][column] = cell;
-        }
-
-        @Override
-        public void initNbLines(int nb) {
-            labyrinth = new Cell[nb][];
-        }
-
-        @Override
-        public void initNbCellsInLine(int lineNumber, int nb) {
-            labyrinth[lineNumber] = new Cell[nb];
-        }
-    }
 
     public static void main(String[] args) {
         new SocketManager().connectToServer(
@@ -51,7 +27,7 @@ public class StaticWorldGenerator {
                     System.exit(0);
                     return null;
                 },
-                new StaticDataRecorder());
+                new DynamicGameWorld());
     }
 
     private static void printWorld(GameWorld world) {
