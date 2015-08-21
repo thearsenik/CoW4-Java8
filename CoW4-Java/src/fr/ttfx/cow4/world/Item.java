@@ -13,4 +13,8 @@ public class Item {
     public void setType(ItemType type) {
         this.type = type;
     }
+
+    public ItemType getType() {
+        return type;
+    }
 }
