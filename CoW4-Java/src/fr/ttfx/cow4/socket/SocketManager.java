@@ -28,7 +28,7 @@ public class SocketManager {
     private PrintWriter output;
     private BufferedReader input;
 
-    public boolean connectToServer(String host, int port, String iaName, String iaImgUrl, Function<GameWorld, List<Order>> handleFunc, GameWorld gameWorld) {
+    public boolean connectToServer(String host, int port, String iaName, String iaImgUrl, CharacterSkin charType, Function<GameWorld, List<Order>> handleFunc, GameWorld gameWorld) {
         this.handleFunc = handleFunc;
         this.gameWorld = gameWorld;
 
@@ -42,7 +42,7 @@ public class SocketManager {
                     "    \"name\":\"" + iaName + "\"," +
                     "    \"avatar\":\"" + iaImgUrl + "\"," +
                     "    \"token\":\"" + "tokendemo" + "\"," +
-                    "    \"profil\":" + 1 + "" +
+                    "    \"profil\":" + 0 + "" +
                     "}" +
                     "#end#");
             output.flush();

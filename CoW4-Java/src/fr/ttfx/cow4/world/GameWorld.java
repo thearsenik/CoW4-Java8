@@ -109,14 +109,14 @@ public abstract class GameWorld {
         for (int i = 0; i < itemJsonArray.size(); i++) {
             String itemStr = itemJsonArray.get(i).getAsJsonObject().get("type").getAsString();
             ItemType itemType = ItemType.Unknown;
-            if ("trap".equals(itemStr)) {
+            if (ItemType.Trap.getLabel().equals(itemStr)) {
                 itemType = ItemType.Trap;
-            } else if ("potion".equals(itemStr)) {
+            } else if (ItemType.InvisibilityPotion.getLabel().equals(itemStr)) {
                 itemType = ItemType.InvisibilityPotion;
-            } else if ("parfum".equals(itemStr)) {
+            } else if (ItemType.PulletPerfume.getLabel().equals(itemStr)) {
                 itemType = ItemType.PulletPerfume;
             }
-            if (itemType == ItemType.Unknown) {
+            if (itemType != ItemType.Unknown) {
                 ia.getItems().add(new Item(itemType));
             } else {
                 System.out.println("WARNING: Unrecognized item: " + itemStr);
