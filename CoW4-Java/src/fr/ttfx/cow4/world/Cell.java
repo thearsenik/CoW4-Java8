@@ -15,12 +15,13 @@ public class Cell {
     private boolean right;
     private boolean top;
     private boolean bottom;
+    private Item item;
 
     public Cell() {
 
     }
 
-    public Cell(Long id, boolean left, boolean right, boolean top, boolean bottom, int line, int column) {
+    public Cell(Long id, boolean left, boolean right, boolean top, boolean bottom, int line, int column, Item item) {
         this.id = id;
         this.left = left;
         this.right = right;
@@ -28,6 +29,7 @@ public class Cell {
         this.bottom = bottom;
         this.line = line;
         this.column = column;
+        this.item = item;
     }
 
     public Long getId() { return id; }
@@ -78,4 +80,11 @@ public class Cell {
 
     public void setColumn(int column) { this.column = column; }
 
+    public Item getItem() {
+        return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
+    }
 }

@@ -22,4 +22,9 @@ public class Constants {
      * Number of mouvement points the chicken would earn if an IA uses the pullet perfume
      */
     public static final int PULLET_PERFUME_MOUVEMENT_POINTS_BONUS = 10;
+
+    /**
+     * Maximum mouvement points an IA can stack
+     */
+    public static final int MAXIMUM_IA_MOUVEMENT_POINTS = 5;
 }

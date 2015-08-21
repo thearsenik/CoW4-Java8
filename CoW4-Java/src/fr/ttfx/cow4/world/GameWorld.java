@@ -5,6 +5,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by TheArsenik on 16/08/15.
  */
@@ -18,6 +21,7 @@ public abstract class GameWorld {
     protected IA chicken = new IA();
     protected Cell[][] labyrinth;
     protected int gameTurn;
+    protected List<Cell> cellsWithItems;
 
     public IA getMyIA() {
         return myIA;
@@ -41,6 +45,10 @@ public abstract class GameWorld {
 
     public void setGameTurn(int gameTurn) {
         this.gameTurn = gameTurn;
+    }
+
+    public List<Cell> getCellsWithItems() {
+        return cellsWithItems;
     }
 
     /**
@@ -85,21 +93,90 @@ public abstract class GameWorld {
             JsonElement occupant = cell.get("occupant");
             if (!(occupant instanceof JsonNull)) {
                 Long occupantId = occupant.getAsJsonObject().get("id").getAsLong();
-                getIaById(occupantId).setCell(labyrinth[line][column]);
+                getIaById(occupantId).setCell(getCell(line, column));
             }
         }
+
+        if (cell.has("item")) {
+            String itemTypeStr = cell.get("item").getAsJsonObject().get("type").getAsString();
+            ItemType itemType = null;
+            if (ItemType.Trap.getLabel().equals(itemTypeStr)) {
+                itemType = ItemType.Trap;
+            } else if (ItemType.InvisibilityPotion.getLabel().equals(itemTypeStr)) {
+                itemType = ItemType.InvisibilityPotion;
+            } else if (ItemType.PulletPerfume.getLabel().equals(itemTypeStr)) {
+                itemType = ItemType.PulletPerfume;
+            } else {
+                itemType = ItemType.Unknown;
+            }
+            getCell(line, column).setItem(new Item(itemType));
+            cellsWithItems.add(getCell(line, column));
+        } else {
+            getCell(line, column).setItem(null);
+        }
+    }
+
+    public List<Cell> getShortestPath(Cell from, Cell to) {
+        List<Cell> path = new ArrayList<Cell>();
+        return getShortestPathAux(path, from, to);
+    }
+
+    public Cell getCell(int line, int column) {
+        return labyrinth[line][column];
     }
 
     public abstract void initNbLines(int nb);
 
     public abstract void initNbCellsInLine(int lineNumber, int nb);
 
+    protected List<Cell> getShortestPathAux(List<Cell> path, Cell current, Cell dest) {
+        if (path.contains(current)) {
+            // We made a loop. This path is leading to nothing good.
+            return null;
+        }
+
+        Cell previous = path.get(path.size() - 1);
+        path.add(current);
+
+        if (current == dest) {
+            // We found a path to destination
+            return path;
+        }
+
+        List<Cell> refPath = null;
+        if (current.canLeft() && previous != getCell(current.getLine(), current.getColumn() - 1)) {
+            launchGetShortestPathAux(path, getCell(current.getLine(), current.getColumn() - 1), dest, refPath);
+        }
+
+        if (current.canRight() && previous != getCell(current.getLine(), current.getColumn() + 1)) {
+            launchGetShortestPathAux(path, getCell(current.getLine(), current.getColumn() + 1), dest, refPath);
+        }
+
+        if (current.canTop() && previous != getCell(current.getLine() - 1, current.getColumn())) {
+            launchGetShortestPathAux(path, getCell(current.getLine() - 1, current.getColumn()), dest, refPath);
+        }
+
+        if (current.canBottom() && previous != getCell(current.getLine()  + 1, current.getColumn())) {
+            launchGetShortestPathAux(path, getCell(current.getLine() + 1, current.getColumn()), dest, refPath);
+        }
+
+        return refPath;
+    }
+
+    private void launchGetShortestPathAux(List<Cell> path, Cell from, Cell dest, List<Cell> refPath) {
+        List<Cell> pathCopy = new ArrayList<>(path);
+        List<Cell> foundPath = getShortestPathAux(pathCopy, from, dest);
+        if (foundPath != null && (refPath == null || refPath.size() < foundPath.size())) {
+            refPath = foundPath;
+        }
+    }
+
     /**
      * Copies informations from the JSON Object to IA object
      * @param ia IA Object
      * @param iaData JSON Object that contains informations
      */
-    private void fillIaInfo(IA ia, JsonObject iaData) {
+    protected void fillIaInfo(IA ia, JsonObject iaData) {
         ia.setId(iaData.get("id").getAsLong());
         ia.setInvisibilityDuration(iaData.get("invisibilityDuration").getAsInt());
         ia.setMouvementPoints(iaData.get("pm").getAsInt());

@@ -42,7 +42,7 @@ public class SocketManager {
                     "    \"name\":\"" + iaName + "\"," +
                     "    \"avatar\":\"" + iaImgUrl + "\"," +
                     "    \"token\":\"" + "tokendemo" + "\"," +
-                    "    \"profil\":" + 0 + "" +
+                    "    \"profil\":" + charType.getId() + "" +
                     "}" +
                     "#end#");
             output.flush();
@@ -56,7 +56,12 @@ public class SocketManager {
                     int messageEnd = sb.indexOf("#end#");
                     if (messageEnd > 0) {
                         String message = sb.substring(0, messageEnd);
-                        System.out.println(message);
+
+                        /////////////////////////////////////////
+                        //          Reset Items Data           //
+                        /////////////////////////////////////////
+                        gameWorld.getCellsWithItems().clear();
+
                         /////////////////////////////////////////
                         //          Parse Input Data           //
                         /////////////////////////////////////////
@@ -74,7 +79,6 @@ public class SocketManager {
                             Response response = new Response();
                             response.setActions(orders);
                             String responseStr = gson.toJson(response);
-                            System.out.println(responseStr);
                             output.write(responseStr);
                             output.write("#end#\n");
                             output.flush();
