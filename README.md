@@ -4,7 +4,7 @@ This is a simple SDK for Code Of War 4 written with Java 8.
 ## Installation
 Clone this repository or download as zip file. 
 
-Once the source code is on you local drive, there is 2 solutions: 
+Once the source code is on you local drive, there are 2 solutions: 
 - integrating it as an IntelliJ module (IntelliJ module is under CoW4-Java/CoW4-Java.iml)
 - adding sources and GSon library to your project.
 
