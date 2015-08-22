@@ -21,7 +21,7 @@ public abstract class GameWorld {
     protected IA chicken = new IA();
     protected Cell[][] labyrinth;
     protected int gameTurn;
-    protected List<Cell> cellsWithItems;
+    protected List<Cell> cellsWithItems = new ArrayList<>();
 
     public IA getMyIA() {
         return myIA;
@@ -135,7 +135,7 @@ public abstract class GameWorld {
             return null;
         }
 
-        Cell previous = path.get(path.size() - 1);
+        Cell previous = path.size() > 0 ? path.get(path.size() - 1) : null;
         path.add(current);
 
         if (current == dest) {
