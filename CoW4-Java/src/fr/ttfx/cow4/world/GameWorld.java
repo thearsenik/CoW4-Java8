@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
+import fr.ttfx.cow4.actions.Order;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,7 +98,7 @@ public abstract class GameWorld {
             }
         }
 
-        if (cell.has("item")) {
+        if (cell.has("item") && !(cell.get("item") instanceof JsonNull)) {
             String itemTypeStr = cell.get("item").getAsJsonObject().get("type").getAsString();
             ItemType itemType = null;
             if (ItemType.Trap.getLabel().equals(itemTypeStr)) {
@@ -117,8 +118,12 @@ public abstract class GameWorld {
     }
 
     public List<Cell> getShortestPath(Cell from, Cell to) {
-        List<Cell> path = new ArrayList<Cell>();
-        return getShortestPathAux(path, from, to);
+        currentShortestPathSize = -1;
+        List<Cell> path = new ArrayList<>();
+        path = getShortestPathAux(path, from, to);
+        // remove "from" from path
+        path.remove(0);
+        return path;
     }
 
     public Cell getCell(int line, int column) {
@@ -129,46 +134,67 @@ public abstract class GameWorld {
 
     public abstract void initNbCellsInLine(int lineNumber, int nb);
 
+    protected int currentShortestPathSize;
     protected List<Cell> getShortestPathAux(List<Cell> path, Cell current, Cell dest) {
+        if (currentShortestPathSize != -1 && path.size() > currentShortestPathSize) {
+            // This path won't be the shortest;
+            return null;
+        }
+
         if (path.contains(current)) {
             // We made a loop. This path is leading to nothing good.
             return null;
         }
 
         Cell previous = path.size() > 0 ? path.get(path.size() - 1) : null;
+
         path.add(current);
 
         if (current == dest) {
             // We found a path to destination
+            if (currentShortestPathSize == -1 || currentShortestPathSize > path.size()) {
+                // We register the shortest path size to avoid unnecessary computing
+                currentShortestPathSize = path.size();
+            }
             return path;
         }
 
         List<Cell> refPath = null;
         if (current.canLeft() && previous != getCell(current.getLine(), current.getColumn() - 1)) {
-            launchGetShortestPathAux(path, getCell(current.getLine(), current.getColumn() - 1), dest, refPath);
+            refPath = min(launchGetShortestPathAux(path, getCell(current.getLine(), current.getColumn() - 1), dest), refPath);
         }
 
         if (current.canRight() && previous != getCell(current.getLine(), current.getColumn() + 1)) {
-            launchGetShortestPathAux(path, getCell(current.getLine(), current.getColumn() + 1), dest, refPath);
+            refPath = min(launchGetShortestPathAux(path, getCell(current.getLine(), current.getColumn() + 1), dest), refPath);
         }
 
         if (current.canTop() && previous != getCell(current.getLine() - 1, current.getColumn())) {
-            launchGetShortestPathAux(path, getCell(current.getLine() - 1, current.getColumn()), dest, refPath);
+            refPath = min(launchGetShortestPathAux(path, getCell(current.getLine() - 1, current.getColumn()), dest), refPath);
         }
 
         if (current.canBottom() && previous != getCell(current.getLine()  + 1, current.getColumn())) {
-            launchGetShortestPathAux(path, getCell(current.getLine() + 1, current.getColumn()), dest, refPath);
+            refPath = min(launchGetShortestPathAux(path, getCell(current.getLine() + 1, current.getColumn()), dest), refPath);
         }
 
         return refPath;
     }
 
-    private void launchGetShortestPathAux(List<Cell> path, Cell from, Cell dest, List<Cell> refPath) {
-        List<Cell> pathCopy = new ArrayList<>(path);
-        List<Cell> foundPath = getShortestPathAux(pathCopy, from, dest);
-        if (foundPath != null && (refPath == null || refPath.size() < foundPath.size())) {
-            refPath = foundPath;
+    private void printPath(List<Cell> path) {
+        path.stream().forEachOrdered(cell -> System.out.print(cell.getId() + "->"));
+        System.out.print("\n");
+    }
+
+    private List<Cell> min(List<Cell> path1, List<Cell> path2) {
+        if (path1 != null && (path2 == null || path1.size() < path2.size())) {
+            return path1;
+        } else {
+            return path2;
         }
+    }
+
+    private List<Cell> launchGetShortestPathAux(List<Cell> path, Cell from, Cell dest) {
+        List<Cell> pathCopy = new ArrayList<>(path);
+        return getShortestPathAux(pathCopy, from, dest);
     }
 
     /**

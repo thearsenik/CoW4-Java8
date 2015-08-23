@@ -52,7 +52,7 @@ public class SocketManager {
             while (true) {
                 try {
                     int read = input.read(buffer);
-                    sb.append(buffer);
+                    sb.append(buffer, 0, read);
                     int messageEnd = sb.indexOf("#end#");
                     if (messageEnd > 0) {
                         String message = sb.substring(0, messageEnd);
@@ -83,7 +83,8 @@ public class SocketManager {
                             output.write("#end#\n");
                             output.flush();
                         }
-                        sb = new StringBuilder();
+                        String nextMessage = sb.substring(messageEnd + "#end#".length());
+                        sb = new StringBuilder(nextMessage);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -114,6 +115,13 @@ public class SocketManager {
      */
     private boolean parseMessage(String message) {
         JsonObject jsonMessage = parser.parse(message).getAsJsonObject();
+//        JsonObject jsonMessage = null;
+//        try {
+//            jsonMessage = parser.parse(message).getAsJsonObject();
+//        }
+//        catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
         if (jsonMessage.get("type").getAsString().equals("id")) {
             // Receiving our IA id
