@@ -4,10 +4,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import fr.ttfx.cow4.actions.Order;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by TheArsenik on 16/08/15.
@@ -117,13 +117,25 @@ public abstract class GameWorld {
         }
     }
 
+    /**
+     * Stores the shortest path length to avoid unnecessary computing
+     */
+    protected List<Cell> currentShortestPath;
+
+    /**
+     * This method search for the shortest path between two cells by
+     * trying all paths.
+     * @param from Cell from where the path starts
+     * @param to The destination Cell
+     * @return A List of Cells indicating the path between the two Cells.
+     */
     public List<Cell> getShortestPath(Cell from, Cell to) {
-        currentShortestPathSize = -1;
-        List<Cell> path = new ArrayList<>();
-        path = getShortestPathAux(path, from, to);
+        currentShortestPath = new ArrayList<>(300);
+        List<Cell> path = new ArrayList<>(300);
+        getShortestPathAux(path, from, to);
         // remove "from" from path
-        path.remove(0);
-        return path;
+        currentShortestPath.remove(0);
+        return currentShortestPath;
     }
 
     public Cell getCell(int line, int column) {
@@ -134,16 +146,15 @@ public abstract class GameWorld {
 
     public abstract void initNbCellsInLine(int lineNumber, int nb);
 
-    protected int currentShortestPathSize;
-    protected List<Cell> getShortestPathAux(List<Cell> path, Cell current, Cell dest) {
-        if (currentShortestPathSize != -1 && path.size() > currentShortestPathSize) {
+    protected void getShortestPathAux(List<Cell> path, Cell current, Cell dest) {
+        if (currentShortestPath.size() > 0 &&  path.size() > currentShortestPath.size()) {
             // This path won't be the shortest;
-            return null;
+            return;
         }
 
         if (path.contains(current)) {
             // We made a loop. This path is leading to nothing good.
-            return null;
+            return;
         }
 
         Cell previous = path.size() > 0 ? path.get(path.size() - 1) : null;
@@ -152,49 +163,67 @@ public abstract class GameWorld {
 
         if (current == dest) {
             // We found a path to destination
-            if (currentShortestPathSize == -1 || currentShortestPathSize > path.size()) {
+            if (currentShortestPath.size() == 0 || currentShortestPath.size() > path.size()) {
                 // We register the shortest path size to avoid unnecessary computing
-                currentShortestPathSize = path.size();
+                currentShortestPath.clear();
+                currentShortestPath.addAll(path);
             }
-            return path;
+            return;
         }
 
-        List<Cell> refPath = null;
-        if (current.canLeft() && previous != getCell(current.getLine(), current.getColumn() - 1)) {
-            refPath = min(launchGetShortestPathAux(path, getCell(current.getLine(), current.getColumn() - 1), dest), refPath);
-        }
+        // Determine which directions should be prioritized
+        int horizontalDiff = current.getColumn() - dest.getColumn();
+        int verticalDiff = current.getLine() - dest.getLine();
+        Direction priotizedDirections[] = new Direction[Direction.values().length];
+        boolean diffLeft = horizontalDiff > 0;
+        boolean diffTop = verticalDiff > 0;
+        if (Math.abs(horizontalDiff) > Math.abs(verticalDiff)) {
+            if (diffLeft) {
+                priotizedDirections[0] = Direction.LEFT;
+                priotizedDirections[3] = Direction.RIGHT;
+            } else {
+                priotizedDirections[0] = Direction.RIGHT;
+                priotizedDirections[3] = Direction.LEFT;
+            }
 
-        if (current.canRight() && previous != getCell(current.getLine(), current.getColumn() + 1)) {
-            refPath = min(launchGetShortestPathAux(path, getCell(current.getLine(), current.getColumn() + 1), dest), refPath);
-        }
-
-        if (current.canTop() && previous != getCell(current.getLine() - 1, current.getColumn())) {
-            refPath = min(launchGetShortestPathAux(path, getCell(current.getLine() - 1, current.getColumn()), dest), refPath);
-        }
-
-        if (current.canBottom() && previous != getCell(current.getLine()  + 1, current.getColumn())) {
-            refPath = min(launchGetShortestPathAux(path, getCell(current.getLine() + 1, current.getColumn()), dest), refPath);
-        }
-
-        return refPath;
-    }
-
-    private void printPath(List<Cell> path) {
-        path.stream().forEachOrdered(cell -> System.out.print(cell.getId() + "->"));
-        System.out.print("\n");
-    }
-
-    private List<Cell> min(List<Cell> path1, List<Cell> path2) {
-        if (path1 != null && (path2 == null || path1.size() < path2.size())) {
-            return path1;
+            if (diffTop) {
+                priotizedDirections[1] = Direction.TOP;
+                priotizedDirections[2] = Direction.BOTTOM;
+            } else {
+                priotizedDirections[1] = Direction.BOTTOM;
+                priotizedDirections[2] = Direction.TOP;
+            }
         } else {
-            return path2;
-        }
-    }
+            if (diffLeft) {
+                priotizedDirections[1] = Direction.LEFT;
+                priotizedDirections[2] = Direction.RIGHT;
+            } else {
+                priotizedDirections[1] = Direction.RIGHT;
+                priotizedDirections[2] = Direction.LEFT;
+            }
 
-    private List<Cell> launchGetShortestPathAux(List<Cell> path, Cell from, Cell dest) {
-        List<Cell> pathCopy = new ArrayList<>(path);
-        return getShortestPathAux(pathCopy, from, dest);
+            if (diffTop) {
+                priotizedDirections[0] = Direction.TOP;
+                priotizedDirections[3] = Direction.BOTTOM;
+            } else {
+                priotizedDirections[0] = Direction.BOTTOM;
+                priotizedDirections[3] = Direction.TOP;
+            }
+        }
+
+        for (Direction direction : priotizedDirections) {
+            if (direction == Direction.LEFT && (current.canLeft() && previous != getCell(current.getLine(), current.getColumn() - 1))) {
+                getShortestPathAux(path, getCell(current.getLine(), current.getColumn() - 1), dest);
+            } else if (direction == Direction.RIGHT && (current.canRight() && previous != getCell(current.getLine(), current.getColumn() + 1))) {
+                getShortestPathAux(path, getCell(current.getLine(), current.getColumn() + 1), dest);
+            } else if (direction == Direction.TOP && (current.canTop() && previous != getCell(current.getLine() - 1, current.getColumn()))) {
+                getShortestPathAux(path, getCell(current.getLine() - 1, current.getColumn()), dest);
+            } else if (direction == Direction.BOTTOM && (current.canBottom() && previous != getCell(current.getLine()  + 1, current.getColumn()))) {
+                getShortestPathAux(path, getCell(current.getLine() + 1, current.getColumn()), dest);
+            }
+        }
+
+        path.remove(path.size() - 1);
     }
 
     /**

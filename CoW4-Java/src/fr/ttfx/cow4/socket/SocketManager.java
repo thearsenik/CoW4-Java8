@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -24,12 +25,18 @@ import java.util.function.Function;
 public class SocketManager {
     private GameWorld gameWorld;
     private Function<GameWorld, List<Order>> handleFunc = null;
+    private Runnable initFunc = null;
     private Socket socket = null;
     private PrintWriter output;
     private BufferedReader input;
 
     public boolean connectToServer(String host, int port, String iaName, String iaImgUrl, CharacterSkin charType, Function<GameWorld, List<Order>> handleFunc, GameWorld gameWorld) {
+        return connectToServer(host, port, iaName, iaImgUrl, charType, () -> { }, handleFunc, gameWorld);
+    }
+
+    public boolean connectToServer(String host, int port, String iaName, String iaImgUrl, CharacterSkin charType, Runnable initFunc, Function<GameWorld, List<Order>> handleFunc, GameWorld gameWorld) {
         this.handleFunc = handleFunc;
+        this.initFunc = initFunc;
         this.gameWorld = gameWorld;
 
         try {
@@ -141,6 +148,9 @@ public class SocketManager {
             /////////////////////////////////////////
             gameWorld.setGameTurn(dataPart.get("currentTurn").getAsInt());
 
+            if (gameWorld.getGameTurn() == 0) {
+                initFunc.run();
+            }
 
             /////////////////////////////////////////
             //              IAs Infos               //
