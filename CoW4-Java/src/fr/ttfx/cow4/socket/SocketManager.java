@@ -76,7 +76,7 @@ public class SocketManager {
 
                         if (shouldAnswer) {
                             /////////////////////////////////////////
-                            //              Call IA                //
+                            //              Call AI                //
                             /////////////////////////////////////////
                             List<Order> orders = handleFunc.apply(gameWorld);
 
@@ -131,12 +131,12 @@ public class SocketManager {
 //        }
 
         if (jsonMessage.get("type").getAsString().equals("id")) {
-            // Receiving our IA id
+            // Receiving our AI id
             // This is the connection process and
             // the first answer from the server
             System.out.println("Connexion OK");
             Long id = jsonMessage.get("id").getAsLong();
-            gameWorld.getMyIA().setId(id);
+            gameWorld.getMyAI().setId(id);
             return false;
         } else {
             // Receiving a message. The turn starts.
@@ -153,14 +153,14 @@ public class SocketManager {
             }
 
             /////////////////////////////////////////
-            //              IAs Infos               //
+            //              AIs Infos               //
             /////////////////////////////////////////
             JsonArray iaList = dataPart.get("iaList").getAsJsonArray();
             gameWorld.parseIaInfos(iaList);
 
 
             /////////////////////////////////////////
-            //        Cells & IAs Positions        //
+            //        Cells & AIs Positions        //
             /////////////////////////////////////////
             JsonArray labyrinth = dataPart.get("cells").getAsJsonArray();
             gameWorld.initNbLines(labyrinth.size());

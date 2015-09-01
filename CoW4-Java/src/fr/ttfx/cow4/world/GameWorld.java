@@ -17,26 +17,26 @@ import java.util.Map;
  * Contains all informations send by the server about the game
  */
 public abstract class GameWorld {
-    protected IA myIA = new IA();
-    protected IA ennemyIA = new IA();
-    protected IA chicken = new IA();
+    protected AI myAI = new AI();
+    protected AI ennemyAI = new AI();
+    protected AI chicken = new AI();
     protected Cell[][] labyrinth;
     protected int gameTurn;
     protected List<Cell> cellsWithItems = new ArrayList<>();
 
-    public IA getMyIA() {
-        return myIA;
+    public AI getMyAI() {
+        return myAI;
     }
 
-    public IA getEnnemyIA() {
-        return ennemyIA;
+    public AI getEnnemyAI() {
+        return ennemyAI;
     }
 
     public Cell[][] getLabyrinth() {
         return labyrinth;
     }
 
-    public IA getChicken() {
+    public AI getChicken() {
         return chicken; // Goto KFC
     }
 
@@ -53,36 +53,36 @@ public abstract class GameWorld {
     }
 
     /**
-     * Copies informations from the JSON Array to IA objects
-     * @param iaList An array that contains all IA informations
+     * Copies informations from the JSON Array to AI objects
+     * @param iaList An array that contains all AI informations
      */
     public void parseIaInfos(JsonArray iaList) {
         for (int i = 0; i < iaList.size(); i++) {
             JsonObject ia = iaList.get(i).getAsJsonObject();
 
-            if (ia.get("id").getAsLong() == getMyIA().getId()) {
-                // it's my IA
-                fillIaInfo(getMyIA(), ia);
-            } else if ("SheepIA".equals(ia.get("name").getAsString())) {
+            if (ia.get("id").getAsLong() == getMyAI().getId()) {
+                // it's my AI
+                fillIaInfo(getMyAI(), ia);
+            } else if ("SheepAI".equals(ia.get("name").getAsString())) {
                 // it's the chicken
                 fillIaInfo(getChicken(), ia);
             } else {
                 // it's the ennemy
-                fillIaInfo(getEnnemyIA(), ia);
+                fillIaInfo(getEnnemyAI(), ia);
             }
         }
     }
 
     /**
-     * Returns IA object corresponding to the id
-     * @param id The id of the IA to return
-     * @return returns an IA if matching with an id else null.
+     * Returns AI object corresponding to the id
+     * @param id The id of the AI to return
+     * @return returns an AI if matching with an id else null.
      */
-    public IA getIaById(Long id) {
-        if (getMyIA().getId().equals(id)) {
-            return getMyIA();
-        } else if (getEnnemyIA().getId().equals(id)) {
-            return getEnnemyIA();
+    public AI getIaById(Long id) {
+        if (getMyAI().getId().equals(id)) {
+            return getMyAI();
+        } else if (getEnnemyAI().getId().equals(id)) {
+            return getEnnemyAI();
         } else if (getChicken().getId().equals(id)) {
             return getChicken();
         }
@@ -121,10 +121,16 @@ public abstract class GameWorld {
      * Stores the shortest path length to avoid unnecessary computing
      */
     protected List<Cell> currentShortestPath;
+    protected int maxAdmissiblePathLength;
 
     /**
-     * This method search for the shortest path between two cells by
+     * WARNING:
+     * THIS METHOD IS VERY SLOW! IT IS GIVEN AS AN EXAMPLE.
+     * DO NOT USE IT WITHOUT MODIFICATIONS OR YOUR AI WOULD RUN IN TIMEOUT.
+     *
+     * This method searches for the shortest path between two cells by
      * trying all paths.
+     *
      * @param from Cell from where the path starts
      * @param to The destination Cell
      * @return A List of Cells indicating the path between the two Cells.
@@ -132,9 +138,14 @@ public abstract class GameWorld {
     public List<Cell> getShortestPath(Cell from, Cell to) {
         currentShortestPath = new ArrayList<>(300);
         List<Cell> path = new ArrayList<>(300);
+        maxAdmissiblePathLength = (Math.abs(from.getColumn() - to.getColumn()) + Math.abs(from.getLine() - to.getLine())) * 5;
         getShortestPathAux(path, from, to);
         // remove "from" from path
-        currentShortestPath.remove(0);
+        if (currentShortestPath.size() > 0) {
+            currentShortestPath.remove(0);
+        } else {
+            System.err.println(String.format("NOT FOUND: (%S, %S) => (%S, %S)", from.getLine(), from.getColumn(), to.getLine(), to.getColumn()));
+        }
         return currentShortestPath;
     }
 
@@ -168,6 +179,7 @@ public abstract class GameWorld {
                 currentShortestPath.clear();
                 currentShortestPath.addAll(path);
             }
+            path.remove(path.size() - 1);
             return;
         }
 
@@ -227,11 +239,11 @@ public abstract class GameWorld {
     }
 
     /**
-     * Copies informations from the JSON Object to IA object
-     * @param ia IA Object
+     * Copies informations from the JSON Object to AI object
+     * @param ia AI Object
      * @param iaData JSON Object that contains informations
      */
-    protected void fillIaInfo(IA ia, JsonObject iaData) {
+    protected void fillIaInfo(AI ia, JsonObject iaData) {
         ia.setId(iaData.get("id").getAsLong());
         ia.setInvisibilityDuration(iaData.get("invisibilityDuration").getAsInt());
         ia.setMouvementPoints(iaData.get("pm").getAsInt());

@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Created by TheArsenik on 16/08/15.
  */
-public class IA {
+public class AI {
     private Long id;
     private int invisibilityDuration;
     private List<Item> items = new ArrayList<>();

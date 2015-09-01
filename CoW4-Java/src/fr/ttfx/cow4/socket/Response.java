@@ -1,7 +1,7 @@
 package fr.ttfx.cow4.socket;
 
 import fr.ttfx.cow4.actions.Order;
-import fr.ttfx.cow4.world.IA;
+import fr.ttfx.cow4.world.AI;
 
 import java.util.List;
 
