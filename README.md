@@ -9,7 +9,7 @@ Once the source code is on you local drive, there are 2 solutions:
 - adding sources and GSon library to your project.
 
 ## Using SDK
-*CAUTION: The `getShortestPath` method in `GameWorld` class is very simple and very slow. You must implement your own one.*
+**CAUTION: The `getShortestPath` method in `GameWorld` class is very simple and very slow. You must implement your own one.**
 
 This SDK is very simple to use. Here are 2 steps to follow.
 ### Connecting to server
