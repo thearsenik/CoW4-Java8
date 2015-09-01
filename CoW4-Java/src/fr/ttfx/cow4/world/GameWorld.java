@@ -54,21 +54,21 @@ public abstract class GameWorld {
 
     /**
      * Copies informations from the JSON Array to AI objects
-     * @param iaList An array that contains all AI informations
+     * @param aiList An array that contains all AI informations
      */
-    public void parseIaInfos(JsonArray iaList) {
-        for (int i = 0; i < iaList.size(); i++) {
-            JsonObject ia = iaList.get(i).getAsJsonObject();
+    public void parseAiInfos(JsonArray aiList) {
+        for (int i = 0; i < aiList.size(); i++) {
+            JsonObject ai = aiList.get(i).getAsJsonObject();
 
-            if (ia.get("id").getAsLong() == getMyAI().getId()) {
+            if (ai.get("id").getAsLong() == getMyAI().getId()) {
                 // it's my AI
-                fillIaInfo(getMyAI(), ia);
-            } else if ("SheepAI".equals(ia.get("name").getAsString())) {
+                fillAiInfo(getMyAI(), ai);
+            } else if ("SheepAI".equals(ai.get("name").getAsString())) {
                 // it's the chicken
-                fillIaInfo(getChicken(), ia);
+                fillAiInfo(getChicken(), ai);
             } else {
                 // it's the ennemy
-                fillIaInfo(getEnnemyAI(), ia);
+                fillAiInfo(getEnnemyAI(), ai);
             }
         }
     }
@@ -78,7 +78,7 @@ public abstract class GameWorld {
      * @param id The id of the AI to return
      * @return returns an AI if matching with an id else null.
      */
-    public AI getIaById(Long id) {
+    public AI getAiById(Long id) {
         if (getMyAI().getId().equals(id)) {
             return getMyAI();
         } else if (getEnnemyAI().getId().equals(id)) {
@@ -94,7 +94,7 @@ public abstract class GameWorld {
             JsonElement occupant = cell.get("occupant");
             if (!(occupant instanceof JsonNull)) {
                 Long occupantId = occupant.getAsJsonObject().get("id").getAsLong();
-                getIaById(occupantId).setCell(getCell(line, column));
+                getAiById(occupantId).setCell(getCell(line, column));
             }
         }
 
@@ -240,16 +240,16 @@ public abstract class GameWorld {
 
     /**
      * Copies informations from the JSON Object to AI object
-     * @param ia AI Object
-     * @param iaData JSON Object that contains informations
+     * @param ai AI Object
+     * @param aiData JSON Object that contains informations
      */
-    protected void fillIaInfo(AI ia, JsonObject iaData) {
-        ia.setId(iaData.get("id").getAsLong());
-        ia.setInvisibilityDuration(iaData.get("invisibilityDuration").getAsInt());
-        ia.setMouvementPoints(iaData.get("pm").getAsInt());
-        ia.setName(iaData.get("name").getAsString());
-        ia.getItems().clear();
-        JsonArray itemJsonArray = iaData.get("items").getAsJsonArray();
+    protected void fillAiInfo(AI ai, JsonObject aiData) {
+        ai.setId(aiData.get("id").getAsLong());
+        ai.setInvisibilityDuration(aiData.get("invisibilityDuration").getAsInt());
+        ai.setMouvementPoints(aiData.get("pm").getAsInt());
+        ai.setName(aiData.get("name").getAsString());
+        ai.getItems().clear();
+        JsonArray itemJsonArray = aiData.get("items").getAsJsonArray();
         for (int i = 0; i < itemJsonArray.size(); i++) {
             String itemStr = itemJsonArray.get(i).getAsJsonObject().get("type").getAsString();
             ItemType itemType = ItemType.Unknown;
@@ -261,7 +261,7 @@ public abstract class GameWorld {
                 itemType = ItemType.PulletPerfume;
             }
             if (itemType != ItemType.Unknown) {
-                ia.getItems().add(new Item(itemType));
+                ai.getItems().add(new Item(itemType));
             } else {
                 System.out.println("WARNING: Unrecognized item: " + itemStr);
             }

@@ -30,11 +30,11 @@ public class SocketManager {
     private PrintWriter output;
     private BufferedReader input;
 
-    public boolean connectToServer(String host, int port, String iaName, String iaImgUrl, CharacterSkin charType, Function<GameWorld, List<Order>> handleFunc, GameWorld gameWorld) {
-        return connectToServer(host, port, iaName, iaImgUrl, charType, () -> { }, handleFunc, gameWorld);
+    public boolean connectToServer(String host, int port, String aiName, String aiImgUrl, CharacterSkin charType, Function<GameWorld, List<Order>> handleFunc, GameWorld gameWorld) {
+        return connectToServer(host, port, aiName, aiImgUrl, charType, () -> { }, handleFunc, gameWorld);
     }
 
-    public boolean connectToServer(String host, int port, String iaName, String iaImgUrl, CharacterSkin charType, Runnable initFunc, Function<GameWorld, List<Order>> handleFunc, GameWorld gameWorld) {
+    public boolean connectToServer(String host, int port, String aiName, String aiImgUrl, CharacterSkin charType, Runnable initFunc, Function<GameWorld, List<Order>> handleFunc, GameWorld gameWorld) {
         this.handleFunc = handleFunc;
         this.initFunc = initFunc;
         this.gameWorld = gameWorld;
@@ -46,8 +46,8 @@ public class SocketManager {
 
             output.write("{" +
                     "    \"type\":\"authenticate\"," +
-                    "    \"name\":\"" + iaName + "\"," +
-                    "    \"avatar\":\"" + iaImgUrl + "\"," +
+                    "    \"name\":\"" + aiName + "\"," +
+                    "    \"avatar\":\"" + aiImgUrl + "\"," +
                     "    \"token\":\"" + "tokendemo" + "\"," +
                     "    \"profil\":" + charType.getId() + "" +
                     "}" +
@@ -108,7 +108,7 @@ public class SocketManager {
     }
 
     /**
-     * en: The JSON parser should be instanciated less time as possible to improve performances
+     * en: The JSON parser should be instancaited less time as possible to improve performances
      * fr: Le parser doit être instancié le moins de fois possible pour améliorer les performances
      */
     static JsonParser parser = new JsonParser();
@@ -155,8 +155,8 @@ public class SocketManager {
             /////////////////////////////////////////
             //              AIs Infos               //
             /////////////////////////////////////////
-            JsonArray iaList = dataPart.get("iaList").getAsJsonArray();
-            gameWorld.parseIaInfos(iaList);
+            JsonArray aiList = dataPart.get("aiList").getAsJsonArray();
+            gameWorld.parseAiInfos(aiList);
 
 
             /////////////////////////////////////////
