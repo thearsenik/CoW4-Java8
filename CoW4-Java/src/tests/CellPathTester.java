@@ -19,7 +19,10 @@ import fr.ttfx.cow4.world.Cell;
 import fr.ttfx.cow4.world.StaticGameWorld;
 
 
-
+/**
+ * This class was initially written by Thomas LEVAVASSEUR.
+ * Thanks for his contribution.
+ */
 public class CellPathTester {
 
 	private static Cell start;
