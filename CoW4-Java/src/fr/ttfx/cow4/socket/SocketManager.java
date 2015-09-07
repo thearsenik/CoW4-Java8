@@ -1,9 +1,6 @@
 package fr.ttfx.cow4.socket;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import fr.ttfx.cow4.actions.Order;
 import fr.ttfx.cow4.world.GameWorld;
 
@@ -155,7 +152,7 @@ public class SocketManager {
             /////////////////////////////////////////
             //              AIs Infos               //
             /////////////////////////////////////////
-            JsonArray aiList = dataPart.get("aiList").getAsJsonArray();
+            JsonArray aiList = dataPart.get("iaList").getAsJsonArray();
             gameWorld.parseAiInfos(aiList);
 
 

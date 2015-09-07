@@ -63,7 +63,7 @@ public abstract class GameWorld {
             if (ai.get("id").getAsLong() == getMyAI().getId()) {
                 // it's my AI
                 fillAiInfo(getMyAI(), ai);
-            } else if ("SheepAI".equals(ai.get("name").getAsString())) {
+            } else if ("SheepIA".equals(ai.get("name").getAsString())) {
                 // it's the chicken
                 fillAiInfo(getChicken(), ai);
             } else {
@@ -79,6 +79,7 @@ public abstract class GameWorld {
      * @return returns an AI if matching with an id else null.
      */
     public AI getAiById(Long id) {
+        System.out.println("getAi");
         if (getMyAI().getId().equals(id)) {
             return getMyAI();
         } else if (getEnnemyAI().getId().equals(id)) {

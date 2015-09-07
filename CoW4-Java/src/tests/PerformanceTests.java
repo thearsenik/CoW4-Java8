@@ -3,14 +3,10 @@ package tests;
 import fr.ttfx.cow4.world.Cell;
 import fr.ttfx.cow4.world.GameWorld;
 import fr.ttfx.cow4.world.StaticGameWorld;
-import org.junit.Assert;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
-import java.util.function.Function;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by Arsenik on 27/08/15.
