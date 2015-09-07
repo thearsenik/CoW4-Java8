@@ -79,7 +79,6 @@ public abstract class GameWorld {
      * @return returns an AI if matching with an id else null.
      */
     public AI getAiById(Long id) {
-        System.out.println("getAi");
         if (getMyAI().getId().equals(id)) {
             return getMyAI();
         } else if (getEnnemyAI().getId().equals(id)) {
@@ -101,7 +100,7 @@ public abstract class GameWorld {
 
         if (cell.has("item") && !(cell.get("item") instanceof JsonNull)) {
             String itemTypeStr = cell.get("item").getAsJsonObject().get("type").getAsString();
-            ItemType itemType = null;
+            ItemType itemType;
             if (ItemType.Trap.getLabel().equals(itemTypeStr)) {
                 itemType = ItemType.Trap;
             } else if (ItemType.InvisibilityPotion.getLabel().equals(itemTypeStr)) {

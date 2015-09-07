@@ -1,12 +1,18 @@
 package fr.ttfx.cow4.world;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by Arsenik on 18/08/15.
  */
 public enum ItemType {
-    Unknown ("unkown"),
+    @SerializedName("unknown")
+    Unknown ("unknown"),
+    @SerializedName("potion")
     InvisibilityPotion ("potion"),
+    @SerializedName("trap")
     Trap ("trap"),
+    @SerializedName("parfum")
     PulletPerfume ("parfum");
 
     private String label;
