@@ -4,10 +4,7 @@ import com.google.gson.*;
 import fr.ttfx.cow4.actions.Order;
 import fr.ttfx.cow4.world.GameWorld;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.util.List;
 import java.util.function.Consumer;
@@ -27,11 +24,32 @@ public class SocketManager {
     private PrintWriter output;
     private BufferedReader input;
 
+    // Record
+    private static int nbInstance = 0;
+    private PrintStream outputStream = null;
+
     public boolean connectToServer(String host, int port, String aiName, String aiImgUrl, CharacterSkin charType, Function<GameWorld, List<Order>> handleFunc, GameWorld gameWorld) {
         return connectToServer(host, port, aiName, aiImgUrl, charType, () -> { }, handleFunc, gameWorld);
     }
 
+    public boolean connectToServer(String host, int port, String aiName, String aiImgUrl, CharacterSkin charType, Function<GameWorld, List<Order>> handleFunc, GameWorld gameWorld, boolean record) {
+        return connectToServer(host, port, aiName, aiImgUrl, charType, () -> { }, handleFunc, gameWorld, record);
+    }
+
     public boolean connectToServer(String host, int port, String aiName, String aiImgUrl, CharacterSkin charType, Runnable initFunc, Function<GameWorld, List<Order>> handleFunc, GameWorld gameWorld) {
+        return connectToServer(host, port, aiName, aiImgUrl, charType, initFunc, handleFunc, gameWorld, false);
+    }
+
+    public boolean connectToServer(String host, int port, String aiName, String aiImgUrl, CharacterSkin charType, Runnable initFunc, Function<GameWorld, List<Order>> handleFunc, GameWorld gameWorld, boolean record) {
+        if  (record) {
+            try {
+                nbInstance++;
+                outputStream = new PrintStream(new BufferedOutputStream(new FileOutputStream("output" + nbInstance + ".txt")));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
+        }
         this.handleFunc = handleFunc;
         this.initFunc = initFunc;
         this.gameWorld = gameWorld;
@@ -83,6 +101,10 @@ public class SocketManager {
                             Response response = new Response();
                             response.setActions(orders);
                             String responseStr = gson.toJson(response);
+                            if (record) {
+                                outputStream.println(responseStr);
+                                outputStream.flush();
+                            }
                             output.write(responseStr);
                             output.write("#end#\n");
                             output.flush();
@@ -181,6 +203,10 @@ public class SocketManager {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+
+        if (outputStream != null) {
+            outputStream.close();
         }
     }
 }
