@@ -17,16 +17,16 @@ import java.util.function.Function;
  * fr: Gère la réception et l\"envoi de messages vers le serveur via le socket
  */
 public class SocketManager {
-    private GameWorld gameWorld;
-    private Function<GameWorld, List<Order>> handleFunc = null;
-    private Runnable initFunc = null;
-    private Socket socket = null;
-    private PrintWriter output;
-    private BufferedReader input;
+    protected GameWorld gameWorld;
+    protected Function<GameWorld, List<Order>> handleFunc = null;
+    protected Runnable initFunc = null;
+    protected Socket socket = null;
+    protected PrintWriter output;
+    protected BufferedReader input;
 
     // Record
-    private static int nbInstance = 0;
-    private PrintStream outputStream = null;
+    protected static int nbInstance = 0;
+    protected PrintStream outputStream = null;
 
     public boolean connectToServer(String host, int port, String aiName, String aiImgUrl, CharacterSkin charType, Function<GameWorld, List<Order>> handleFunc, GameWorld gameWorld) {
         return connectToServer(host, port, aiName, aiImgUrl, charType, () -> { }, handleFunc, gameWorld);
@@ -130,8 +130,8 @@ public class SocketManager {
      * en: The JSON parser should be instancaited less time as possible to improve performances
      * fr: Le parser doit être instancié le moins de fois possible pour améliorer les performances
      */
-    static JsonParser parser = new JsonParser();
-    static Gson gson = new Gson();
+    protected static JsonParser parser = new JsonParser();
+    protected static Gson gson = new Gson();
 
     /**
      * Parse and extracts informations available in the message
@@ -139,7 +139,7 @@ public class SocketManager {
      *
      * @param message A message read from the socket
      */
-    private boolean parseMessage(String message) {
+    protected boolean parseMessage(String message) {
         JsonObject jsonMessage = parser.parse(message).getAsJsonObject();
 //        JsonObject jsonMessage = null;
 //        try {

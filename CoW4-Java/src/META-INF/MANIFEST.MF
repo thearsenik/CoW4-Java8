@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Class-Path: junit-4.7.jar gson-2.3.1.jar gson-2.3.1-javadoc.jar
+Main-Class: com.ninja.naked.Main
+
