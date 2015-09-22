@@ -28,19 +28,19 @@ public class SocketManager {
     protected static int nbInstance = 0;
     protected PrintStream outputStream = null;
 
-    public boolean connectToServer(String host, int port, String aiName, String aiImgUrl, CharacterSkin charType, Function<GameWorld, List<Order>> handleFunc, GameWorld gameWorld) {
-        return connectToServer(host, port, aiName, aiImgUrl, charType, () -> { }, handleFunc, gameWorld);
+    public boolean connectToServer(String host, int port, String aiName, String token, String aiImgUrl, CharacterSkin charType, Function<GameWorld, List<Order>> handleFunc, GameWorld gameWorld) {
+        return connectToServer(host, port, aiName, token, aiImgUrl, charType, () -> { }, handleFunc, gameWorld);
     }
 
-    public boolean connectToServer(String host, int port, String aiName, String aiImgUrl, CharacterSkin charType, Function<GameWorld, List<Order>> handleFunc, GameWorld gameWorld, boolean record) {
-        return connectToServer(host, port, aiName, aiImgUrl, charType, () -> { }, handleFunc, gameWorld, record);
+    public boolean connectToServer(String host, int port, String aiName, String token, String aiImgUrl, CharacterSkin charType, Function<GameWorld, List<Order>> handleFunc, GameWorld gameWorld, boolean record) {
+        return connectToServer(host, port, aiName, token, aiImgUrl, charType, () -> { }, handleFunc, gameWorld, record);
     }
 
-    public boolean connectToServer(String host, int port, String aiName, String aiImgUrl, CharacterSkin charType, Runnable initFunc, Function<GameWorld, List<Order>> handleFunc, GameWorld gameWorld) {
-        return connectToServer(host, port, aiName, aiImgUrl, charType, initFunc, handleFunc, gameWorld, false);
+    public boolean connectToServer(String host, int port, String aiName, String token, String aiImgUrl, CharacterSkin charType, Runnable initFunc, Function<GameWorld, List<Order>> handleFunc, GameWorld gameWorld) {
+        return connectToServer(host, port, aiName, token, aiImgUrl, charType, initFunc, handleFunc, gameWorld, false);
     }
 
-    public boolean connectToServer(String host, int port, String aiName, String aiImgUrl, CharacterSkin charType, Runnable initFunc, Function<GameWorld, List<Order>> handleFunc, GameWorld gameWorld, boolean record) {
+    public boolean connectToServer(String host, int port, String aiName, String token, String aiImgUrl, CharacterSkin charType, Runnable initFunc, Function<GameWorld, List<Order>> handleFunc, GameWorld gameWorld, boolean record) {
         if  (record) {
             try {
                 nbInstance++;
@@ -63,7 +63,7 @@ public class SocketManager {
                     "    \"type\":\"authenticate\"," +
                     "    \"name\":\"" + aiName + "\"," +
                     "    \"avatar\":\"" + aiImgUrl + "\"," +
-                    "    \"token\":\"" + "tokendemo" + "\"," +
+                    "    \"token\":\"" + token + "\"," +
                     "    \"profil\":" + charType.getId() + "" +
                     "}" +
                     "#end#");

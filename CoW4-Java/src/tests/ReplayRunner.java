@@ -49,7 +49,7 @@ public class ReplayRunner extends SocketManager {
     }
 
     protected void start(String fileName) {
-        connectToServer("localhost", 8127, fileName, "", CharacterSkin.BARBARIAN, () -> {}, (world) -> null, new StaticGameWorld(), false);
+        connectToServer("localhost", 8127, fileName, "", "", CharacterSkin.BARBARIAN, () -> {}, (world) -> null, new StaticGameWorld(), false);
     }
 
     protected void loadReplayFile(String file) throws IOException {
@@ -57,7 +57,7 @@ public class ReplayRunner extends SocketManager {
     }
 
     @Override
-    public boolean connectToServer(String host, int port, String aiName, String aiImgUrl, CharacterSkin charType, Runnable initFunc, Function<GameWorld, List<Order>> handleFunc, GameWorld gameWorld, boolean record) {
+    public boolean connectToServer(String host, int port, String token, String aiName, String aiImgUrl, CharacterSkin charType, Runnable initFunc, Function<GameWorld, List<Order>> handleFunc, GameWorld gameWorld, boolean record) {
         this.handleFunc = handleFunc;
         this.initFunc = initFunc;
         this.gameWorld = gameWorld;
@@ -71,7 +71,7 @@ public class ReplayRunner extends SocketManager {
                     "    \"type\":\"authenticate\"," +
                     "    \"name\":\"" + aiName + "\"," +
                     "    \"avatar\":\"" + aiImgUrl + "\"," +
-                    "    \"token\":\"" + "tokendemo" + "\"," +
+                    "    \"token\":\"" + token + "\"," +
                     "    \"profil\":" + charType.getId() + "" +
                     "}" +
                     "#end#");

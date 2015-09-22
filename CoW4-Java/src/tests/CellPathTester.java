@@ -9,7 +9,6 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
-import java.util.Stack;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;

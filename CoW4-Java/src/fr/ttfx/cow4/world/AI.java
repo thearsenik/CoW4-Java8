@@ -1,5 +1,7 @@
 package fr.ttfx.cow4.world;
 
+import fr.ttfx.cow4.socket.CharacterSkin;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +15,7 @@ public class AI {
     private String name;
     private int mouvementPoints;
     private Cell cell;
+    private CharacterSkin profil;
 
     public Long getId() {
         return id;
@@ -62,5 +65,13 @@ public class AI {
 
     public Cell getCell() {
         return cell;
+    }
+
+    public void setProfil(CharacterSkin profil) {
+        this.profil = profil;
+    }
+
+    public CharacterSkin getProfil() {
+        return profil;
     }
 }

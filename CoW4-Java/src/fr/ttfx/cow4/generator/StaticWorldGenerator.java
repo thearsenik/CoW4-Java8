@@ -23,6 +23,7 @@ public class StaticWorldGenerator {
                 Integer.parseInt(args[1]),
                 "staticWorlGenerator",
                 "",
+                "",
                 CharacterSkin.BARBARIAN,
                 (world) -> {
                     printWorld(world);
