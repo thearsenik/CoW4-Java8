@@ -34,7 +34,7 @@ public class AI {
     }
 
     public boolean isVisible() {
-        return invisibilityDuration > 0;
+        return invisibilityDuration <= 0;
     }
 
     public List<Item> getItems() { return items; }
