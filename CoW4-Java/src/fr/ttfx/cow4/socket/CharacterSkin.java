@@ -4,10 +4,10 @@ package fr.ttfx.cow4.socket;
  * Created by Arsenik on 21/08/15.
  */
 public enum CharacterSkin {
-    WIZARD (0),
-    KNIGHT (1),
-    BARBARIAN (2),
-    PULLET (3);
+    WIZARD(0),
+    DWARF(1),
+    ELF(2),
+    PULLET(3);
 
     private int id;
 

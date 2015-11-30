@@ -130,11 +130,29 @@ public abstract class GameWorld {
      * This method searches for the shortest path between two cells by
      * trying all paths.
      *
+     * Ennemy AI and traps are considered as blocking elements
+     *
      * @param from Cell from where the path starts
      * @param to The destination Cell
      * @return A List of Cells indicating the path between the two Cells.
      */
     public List<Cell> getShortestPath(Cell from, Cell to) {
+        return getShortestPath(from, to, true);
+    }
+
+    /**
+     * This method searches for the shortest path between two cells by
+     * trying all paths.
+     *
+     * Ennemy AI and traps are ignored if considerOnlyWalls is set to true
+     *
+     * @param from Cell from where the path starts
+     * @param to The destination Cell$
+     * @param considerOnlyWalls  If true ennemy AI and traps are ignored so only walls
+     *                           would be considered as blocking elements
+     * @return A List of Cells indicating the path between the two Cells.
+     */
+    public List<Cell> getShortestPath(Cell from, Cell to, boolean considerOnlyWalls) {
         if (nodes == null) {
             nodes = new Node[LABYRINTH_SIZE][LABYRINTH_SIZE];
             for (int i = 0; i < LABYRINTH_SIZE; i++) {
@@ -176,27 +194,39 @@ public abstract class GameWorld {
                 }
                 return path;
             }
-            addAdjacentNodesToOpenList(to);
+            addAdjacentNodesToOpenList(to, considerOnlyWalls);
         } while(!openList.isEmpty());
         return null;
     }
 
-    private void addAdjacentNodesToOpenList(Cell to) {
+    private void addAdjacentNodesToOpenList(Cell to, boolean considerOnlyWalls) {
         if (current.cell.canTop()) {
             Node node = nodes[current.cell.getLine() - 1][current.cell.getColumn()];
-            computeNode(to, node);
+            if (considerOnlyWalls || (getEnnemyAI().getCell() != node.cell
+                    && !getCellsWithItems().stream().filter(x -> x.getItem().getType() == ItemType.Trap).anyMatch(x -> node.cell == x))) {
+                computeNode(to, node);
+            }
         }
         if (current.cell.canBottom()) {
             Node node = nodes[current.cell.getLine() + 1][current.cell.getColumn()];
-            computeNode(to, node);
+            if (considerOnlyWalls || (getEnnemyAI().getCell() != node.cell
+                    && !getCellsWithItems().stream().filter(x -> x.getItem().getType() == ItemType.Trap).anyMatch(x -> node.cell == x))) {
+                computeNode(to, node);
+            }
         }
         if (current.cell.canLeft()) {
             Node node = nodes[current.cell.getLine()][current.cell.getColumn() - 1];
-            computeNode(to, node);
+            if (considerOnlyWalls || (getEnnemyAI().getCell() != node.cell
+                    && !getCellsWithItems().stream().filter(x -> x.getItem().getType() == ItemType.Trap).anyMatch(x -> node.cell == x))) {
+                computeNode(to, node);
+            }
         }
         if (current.cell.canRight()) {
             Node node = nodes[current.cell.getLine()][current.cell.getColumn() + 1];
-            computeNode(to, node);
+            if (considerOnlyWalls || (getEnnemyAI().getCell() != node.cell
+                    && !getCellsWithItems().stream().filter(x -> x.getItem().getType() == ItemType.Trap).anyMatch(x -> node.cell == x))) {
+                computeNode(to, node);
+            }
         }
     }
 
@@ -330,12 +360,12 @@ public abstract class GameWorld {
         ai.setName(aiData.get("name").getAsString());
         CharacterSkin skin = null;
         int profil = aiData.get("profil").getAsInt();
-        if (profil == CharacterSkin.BARBARIAN.getId()) {
-            skin = CharacterSkin.BARBARIAN;
+        if (profil == CharacterSkin.DWARF.getId()) {
+            skin = CharacterSkin.DWARF;
         } else if (profil == CharacterSkin.WIZARD.getId()) {
             skin = CharacterSkin.WIZARD;
-        } else if (profil == CharacterSkin.KNIGHT.getId()) {
-            skin = CharacterSkin.KNIGHT;
+        } else if (profil == CharacterSkin.ELF.getId()) {
+            skin = CharacterSkin.ELF;
         } else if (profil == CharacterSkin.PULLET.getId()) {
             skin = CharacterSkin.PULLET;
         } else {

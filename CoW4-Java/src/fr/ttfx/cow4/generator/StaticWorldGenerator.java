@@ -4,10 +4,8 @@ package fr.ttfx.cow4.generator;
  * Created by Arsenik on 18/08/15.
  */
 
-import com.google.gson.JsonObject;
 import fr.ttfx.cow4.socket.CharacterSkin;
 import fr.ttfx.cow4.socket.SocketManager;
-import fr.ttfx.cow4.world.Cell;
 import fr.ttfx.cow4.world.DynamicGameWorld;
 import fr.ttfx.cow4.world.GameWorld;
 
@@ -24,7 +22,7 @@ public class StaticWorldGenerator {
                 "staticWorlGenerator",
                 "",
                 "",
-                CharacterSkin.BARBARIAN,
+                CharacterSkin.DWARF,
                 (world) -> {
                     printWorld(world);
                     System.exit(0);

@@ -2,7 +2,6 @@ package tests;
 
 import fr.ttfx.cow4.actions.Order;
 import fr.ttfx.cow4.socket.CharacterSkin;
-import fr.ttfx.cow4.socket.Response;
 import fr.ttfx.cow4.socket.SocketManager;
 import fr.ttfx.cow4.world.GameWorld;
 import fr.ttfx.cow4.world.StaticGameWorld;
@@ -49,7 +48,7 @@ public class ReplayRunner extends SocketManager {
     }
 
     protected void start(String fileName) {
-        connectToServer("localhost", 8127, fileName, "", "", CharacterSkin.BARBARIAN, () -> {}, (world) -> null, new StaticGameWorld(), false);
+        connectToServer("localhost", 8127, fileName, "", "", CharacterSkin.DWARF, () -> {}, (world) -> null, new StaticGameWorld(), false);
     }
 
     protected void loadReplayFile(String file) throws IOException {
